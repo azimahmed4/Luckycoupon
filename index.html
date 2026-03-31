@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লাকী কুপনের | Azim Ahmed</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --accent: #f39c12;
+            --white: #ffffff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- Full Screen Hero Section --- */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active { opacity: 1; }
+
+        /* Overlay Styles */
+        .overlay-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* --- বড় টাইটেল স্টাইল --- */
+        .main-title {
+            font-size: 60px;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.8);
+            text-align: center;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .main-title span {
+            color: var(--accent);
+        }
+
+        .search-card {
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Search Box */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            padding: 15px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #1557b0; transform: scale(1.05); }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            text-align: left;
+        }
+
+        .winner { background: rgba(39, 174, 96, 0.9); border: 1px solid #2ecc71; }
+        .not-found { background: rgba(231, 76, 60, 0.9); border: 1px solid #ff7675; }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            z-index: 20;
+        }
+        footer a { color: var(--accent); text-decoration: none; font-weight: bold; }
+
+        /* Responsive Mobile */
+        @media (max-width: 600px) {
+            .main-title { font-size: 35px; letter-spacing: 2px; }
+            .search-card { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-section">
+        <div class="slider-container" id="slider">
+            <img src="slider1.jpg" class="slide active">
+            <img src="slider2.jpg" class="slide">
+            <img src="slider3.jpg" class="slide">
+        </div>
+
+        <div class="overlay-content">
+            <h1 class="main-title">হরিনাকুণ্ডু আব্দুর রাজ্জাক (মুন্সি) নিউ মার্কেট ও বড় বাজার দোকান মালিক সমিতির  <span>লাকী কুপনের</span></h1>
+
+            <div class="search-card">
+                <h3 style="margin: 0;">আপনার কুপন নম্বর দিন</h3>
+                <div class="input-group">
+                    <input type="number" id="couponInput" placeholder="উদা: 49438" autocomplete="off">
+                    <button onclick="searchCoupon()">সার্চ</button>
+                </div>
+                <div id="result"></div>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2026 | Developed by <a href="https://azimahmed4.github.io/portfolio/" target="_blank">Azim Ahmed</a>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+
+    <script>
+        // স্লাইডার লজিক
+        let slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 4000); // ৪ সেকেন্ড পর পর পাল্টাবে
+
+        // সার্চ লজিক
+        function searchCoupon() {
+            const input = document.getElementById('couponInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            if (!input) return alert("নম্বর লিখুন!");
+
+            const winner = winners.find(w => w.coupon === input);
+            resultDiv.style.display = "block";
+            if (winner) {
+                resultDiv.className = "winner";
+                resultDiv.innerHTML = `
+                    <p style="margin:0">অভিনন্দন! আপনি জিতেছেন:</p>
+                    <h2 style="margin: 5px 0;">${winner.prize}</h2>
+                    <p style="margin:0; font-size:14px;">বিজয়ীর নাম: ${winner.name}<br>মোবাইল: ${winner.mobile}</p>
+                `;
+            } else {
+                resultDiv.className = "not-found";
+                resultDiv.innerHTML = "দুঃখিত, বিজয়ী তালিকায় নেই।";
+            }
+        }
+
+        document.getElementById('couponInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') searchCoupon();
+        });
+    </script>
+</body>
+</html>
